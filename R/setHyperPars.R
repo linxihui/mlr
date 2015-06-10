@@ -69,5 +69,6 @@ setHyperPars2.Learner = function(learner, par.vals) {
       learner$par.vals[[n]] = p
     }
   }
+  if(isFeasible(learner$par.set, learner$par.vals))
   return(learner)
 }

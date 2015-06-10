@@ -16,7 +16,8 @@ makeRLearner.classif.mock2 = function() {
   makeRLearnerClassif(
     cl = "classif.mock2", package = character(0L),
     par.set = makeParamSet(
-      makeNumericLearnerParam("alpha", lower = 0, upper = 1)
+      makeNumericLearnerParam("alpha", lower = 0, upper = 1),
+      makeDiscreteLearnerParam("gamma", values = letters[1:3], requires = expression(alpha == 0))
     ),
     properties = c("twoclass", "multiclass", "missings", "numerics", "factors", "prob")
   )

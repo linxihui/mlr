@@ -83,3 +83,8 @@ test_that("options are respected", {
 
   do.call(configureMlr, mlr.opts)
 })
+
+test_that("requirements are respected", {
+  lrn = makeLearner("classif.mock2", alpha = 1)
+  setHyperPars(lrn, gamma = "a")
+})
