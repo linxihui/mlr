@@ -27,7 +27,7 @@ test_that("removing par settings works", {
   lrn = makeLearner("classif.qda")
   expect_error(removeHyperPars(lrn, "minsplit"), "Trying to remove")
   expect_error(removeHyperPars(lrn, "xxx"), "Trying to remove")
-  lrn2 = setHyperPars(lrn, method = "mve", nu = 7)
+  lrn2 = setHyperPars(lrn, method = "t", nu = 7)
   lrn3 = removeHyperPars(lrn2, "method")
   expect_equal(getHyperPars(lrn3), list(nu = 7))
 
@@ -56,7 +56,7 @@ test_that("setting 'when' works for hyperpars", {
 
 test_that("options are respected", {
   # with local option
-
+  
   lrn = makeLearner("classif.mock2")
   expect_error(setHyperPars(lrn, beta = 1), "available description object")
   lrn = makeLearner("classif.mock2", config = list(on.par.without.desc = "warn"))
@@ -85,6 +85,14 @@ test_that("options are respected", {
 })
 
 test_that("requirements are respected", {
-  lrn = makeLearner("classif.mock2", alpha = 1)
-  setHyperPars(lrn, gamma = "a")
+  error.string = "not set to a feasible parameter setting"
+  lrn = makeLearner("classif.mock2", alpha = 0, gamma = "a")
+  expect_is(lrn, "Learner")
+  expect_error(makeLearner("classif.mock2", alpha = 1, gamma = "a"), error.string)
+  expect_is(setHyperPars(lrn, gamma = "b"), "Learner")
+  expect_error(setHyperPars(lrn, alpha = 1), error.string)
+  lrn = removeHyperPars(lrn, "gamma")
+  expect_is(lrn, "Learner")
+  lrn = setHyperPars(lrn, alpha = 1)
+  expect_is(lrn, "Learner")
 })
