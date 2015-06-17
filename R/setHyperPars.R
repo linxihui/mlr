@@ -69,13 +69,10 @@ setHyperPars2.Learner = function(learner, par.vals) {
       learner$par.vals[[n]] = p
     }
   }
-  if (length(learner$par.vals) && on.par.out.of.bounds != "quiet" && !isFeasible(learner$par.set, learner$par.vals)) {
-    msg = sprintf("The learner %s is not set to a feasible parameter setting.", learner$id)
-    if (on.par.out.of.bounds == "stop") {
-      stop(msg)
-    } else {
-      warning(msg)
-    }
-  }
+  #check the requirements only on the whole param.set
+
+  if (length(learner$par.vals)) 
+    isRequiresOk(learner$par.set, learner$par.vals)
+
   return(learner)
 }

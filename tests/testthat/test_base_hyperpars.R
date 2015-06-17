@@ -85,7 +85,7 @@ test_that("options are respected", {
 })
 
 test_that("requirements are respected", {
-  error.string = "not set to a feasible parameter setting"
+  error.string = "parameter settings do not meet the requirements"
   lrn = makeLearner("classif.mock2", alpha = 0, gamma = "a")
   expect_is(lrn, "Learner")
   expect_error(makeLearner("classif.mock2", alpha = 1, gamma = "a"), error.string)
