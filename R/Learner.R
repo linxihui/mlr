@@ -67,7 +67,7 @@ makeLearner = function(cl, id = cl, predict.type = "response", predict.threshold
     stop("Cannot create learner from empty string!")
   if (!inherits(wl, "RLearner"))
     stop("Learner must be a basic RLearner!")
-  wl = setHyperPars(learner = wl, ..., par.vals = par.vals)
+  wl = setHyperPars(learner = wl, ..., par.vals = par.vals, new = TRUE)
   wl = setPredictType(learner = wl, predict.type = predict.type)
   wl$predict.threshold = predict.threshold
   wl$fix.factors.prediction = fix.factors.prediction

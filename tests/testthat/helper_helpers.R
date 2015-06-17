@@ -37,8 +37,18 @@ testSimple = function(t.name, df, target, train.inds, old.predicts, parset = lis
   inds = train.inds
   train = df[inds,]
   test = df[-inds,]
-
-  lrn = do.call("makeLearner", c(list(t.name), parset))
+  
+  print(parset)
+  catf("~~")
+  lrn = do.call("makeLearner", c(list(t.name)))
+  print(lrn$par.vals)
+  catf("--S--")
+  if (length(parset) && length(lrn$par.vals))
+    lrn = removeHyperPars(learner = lrn, ids = names(lrn$par.vals))
+  lrn = setHyperPars(lrn, parset)
+  
+  #if (length(parset) && length(lrn$par.vals))
+  #  lrn = removeHyperPars(learner = lrn, ids = names(lrn$par.vals))
   # FIXME this heuristic will backfire eventually
   if (length(target) == 0)
     task = makeClusterTask(data = df)
@@ -84,7 +94,14 @@ testProb = function(t.name, df, target, train.inds, old.probs, parset = list()) 
 
   task = makeClassifTask(data = df, target = target)
 
-  lrn = do.call("makeLearner", c(t.name, parset, predict.type = "prob"))
+  print(parset)
+  catf("~~")
+  lrn = do.call("makeLearner", c(t.name, predict.type = "prob"))
+  print(lrn$par.vals)
+  catf("--P--")
+  if (length(parset) && length(lrn$par.vals))
+    lrn = removeHyperPars(learner = lrn, ids = names(lrn$par.vals))
+  lrn = setHyperPars(lrn, parset)
   m = try(train(lrn, task, subset = inds))
 
   if (inherits(m, "FailureModel")) {
