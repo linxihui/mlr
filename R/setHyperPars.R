@@ -7,8 +7,6 @@
 #' @param par.vals [\code{list}]\cr
 #'   Optional list of named (hyper)parameter settings. The arguments in
 #'   \code{...} take precedence over values in this list.
-#' @param new [\code{logical(1)}]\cr
-#'   Should all existing \code{par.vals} be deleted so that only the given \code{par.vals} will be further existent.
 #' @template ret_learner
 #' @export
 #' @family learner
@@ -18,13 +16,12 @@
 #' print(cl1)
 #' # note the now set and altered hyperparameters:
 #' print(cl2)
-setHyperPars = function(learner, ..., par.vals = list(), new = FALSE) {
+setHyperPars = function(learner, ..., par.vals = list()) {
   args = list(...)
   assertClass(learner, classes = "Learner")
   assertList(args, names = "named", .var.name = "parameter settings")
   assertList(par.vals, names = "named", .var.name = "parameter settings")
-  assertFlag(new)
-  setHyperPars2(learner, insert(par.vals, args), new = new)
+  setHyperPars2(learner, insert(par.vals, args))
 }
 
 #' Only exported for internal use.
@@ -33,16 +30,14 @@ setHyperPars = function(learner, ..., par.vals = list(), new = FALSE) {
 #' @param par.vals [\code{list}]\cr
 #'   List of named (hyper)parameter settings.
 #' @export
-setHyperPars2 = function(learner, par.vals, new) {
+setHyperPars2 = function(learner, par.vals) {
   UseMethod("setHyperPars2")
 }
 
 #' @export
-setHyperPars2.Learner = function(learner, par.vals, new) {
+setHyperPars2.Learner = function(learner, par.vals) {
   ns = names(par.vals)
   pars = learner$par.set$pars
-  if (new)
-    learner = removeHyperPars(learner)
   on.par.without.desc = coalesce(learner$config$on.par.without.desc, getMlrOptions()$on.par.without.desc)
   on.par.out.of.bounds = coalesce(learner$config$on.par.out.of.bounds, getMlrOptions()$on.par.out.of.bounds)
   for (i in seq_along(par.vals)) {

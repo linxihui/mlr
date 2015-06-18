@@ -36,6 +36,8 @@
 #' @param config [\code{named list}]\cr
 #'   Named list of config option to overwrite global settings set via \code{\link{configureMlr}}
 #'   for this specific learner.
+#' @param clean [\code{logical}]\cr
+#'   Should the predefined param.vals be cleaned? Default is \code{FALSE}.
 #' @return [\code{\link{Learner}}].
 #' @family learner
 #' @export
@@ -47,7 +49,7 @@
 #' lrn = makeLearner("classif.lda", method = "t", nu = 10)
 #' print(lrn$par.vals)
 makeLearner = function(cl, id = cl, predict.type = "response", predict.threshold = NULL,
-  fix.factors.prediction = FALSE, ..., par.vals = list(), config = list()) {
+  fix.factors.prediction = FALSE, ..., par.vals = list(), config = list(), clean = FALSE) {
 
   assertString(cl)
   assertFlag(fix.factors.prediction)
@@ -67,7 +69,9 @@ makeLearner = function(cl, id = cl, predict.type = "response", predict.threshold
     stop("Cannot create learner from empty string!")
   if (!inherits(wl, "RLearner"))
     stop("Learner must be a basic RLearner!")
-  wl = setHyperPars(learner = wl, ..., par.vals = par.vals, new = TRUE)
+  if (length(wl$par.vals) > 0 && (length(par.vals) > 0 || clean))
+    wl$par.vals = list()
+  wl = setHyperPars(learner = wl, ..., par.vals = par.vals)
   wl = setPredictType(learner = wl, predict.type = predict.type)
   wl$predict.threshold = predict.threshold
   wl$fix.factors.prediction = fix.factors.prediction
