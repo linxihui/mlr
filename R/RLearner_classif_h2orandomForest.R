@@ -39,6 +39,10 @@ predictLearner.classif.h2orandomForest = function(.learner, .model, .newdata, ..
   h2of = as.h2o(.newdata)
   p = h2o::h2o.predict(m, newdata = h2of, ...)
   p.df = as.data.frame(p)
+  
+  pCol = grepl("p[[:digit:]]", colnames(p.df))
+  if(any(pCol)) colnames(p.df)[pCol] = gsub("p", "", colnames(p.df)[pCol])
+  
   if (.learner$predict.type == "response") {
     return(p.df$predict)
   } else {
