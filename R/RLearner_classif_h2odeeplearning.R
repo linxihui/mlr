@@ -157,18 +157,19 @@ makeRLearner.classif.h2odeeplearning = function() {
     par.set = makeParamSet(
     makeLogicalLearnerParam("autoencoder", default = FALSE),
     makeLogicalLearnerParam("use_all_factor_level", default = TRUE),
-    makeDiscreteParam(activation = c("Rectifier", "Tanh", "TanhWithDropout", "RectifierWithDropout", "Maxout", "MaxoutWithDropout")),
+    makeDiscreteLearnerParam("activation", values = 
+      c("Rectifier", "Tanh", "TanhWithDropout", "RectifierWithDropout", "Maxout", "MaxoutWithDropout"), default = "Rectifier"),
     # FIXME: hidden can also be a list of integer vectors for grid search
-    makeIntegerVectorLearnerParam("hidden", default = c(200L, 200)), 
-    makeNumericLearnerParam("epochs", default = 10L), # doc says can be fractional
+    makeIntegerVectorLearnerParam("hidden", default = c(200L, 200L), len = NA_integer_, lower = 1L), 
+    makeNumericLearnerParam("epochs", default = 10L, lower = 1), # doc says can be fractional
     makeNumericLearnerParam("train_samples_per_iteration", default = -2, lower = -2), 
     makeIntegerLearnerParam("seed", tunable = FALSE),
     makeLogicalLearnerParam("adaptive_rate", default = TRUE),
-    makeNumericLearnerParam("rho", default = 0.99),
+    makeNumericLearnerParam("rho", default = 0.99, lower = 0), # is there a upper limit for this?
     makeNumericLearnerParam("epsilon", default = 1e-08),
-    makeNumericLearnerParam("rate", default = 0.005),
-    makeNumericLearnerParam("rate_annealing", default = 1e-06),
-    makeNumericLearnerParam("rate_decay", default = 1),
+    makeNumericLearnerParam("rate", default = 0.005, lower = 0, upper = 1),
+    makeNumericLearnerParam("rate_annealing", default = 1e-06, lower = 0),
+    makeNumericLearnerParam("rate_decay", default = 1, lower = 0),
     makeNumericLearnerParam("momentum_start", default = 0),
     makeNumericLearnerParam("momentum_ramp", default = 1e+06),
     makeNumericLearnerParam("momentum_stable", default = 0),
@@ -177,19 +178,20 @@ makeRLearner.classif.h2odeeplearning = function() {
     makeNumericLearnerParam("hidden_dropout_ratios", default = 0.5),
     makeNumericLearnerParam("l1", default = 0),
     makeNumericLearnerParam("l2", default = 0),
-    makeNumericLearnerParam("max_w2", default = Inf),
+    makeNumericLearnerParam("max_w2", default = Inf, allow.inf = TRUE),
+    #makeNumericLearnerParam("max_w2", default = 1e+06),
     makeDiscreteLearnerParam("initial_weight_distribution", values = c("UniformAdaptive", "Uniform", "Normal"), default = "UniformAdaptive"),
     makeNumericLearnerParam("initial_weight_scale", default = 1),
-    makeDiscreteParam("loss", default = c("Automatic", "CrossEntropy", "MeanSquare", "Absolute", "Huber")),
+    makeDiscreteLearnerParam("loss", values = c("Automatic", "CrossEntropy", "MeanSquare", "Absolute", "Huber")),
     makeNumericLearnerParam("score_interval", default = 5),
     makeIntegerLearnerParam("score_training_samples", default = 10000),
     makeIntegerLearnerParam("score_validation_samples", default = 0),
     makeNumericLearnerParam("score_duty_cycle", default = 0.1),
-    makeNumericLearnerParam("classification_stop", default = 0),
-    makeNumericLearnerParam("regression_stop", default = 1e-6),
+    makeNumericLearnerParam("classification_stop", default = 0, lower = -1),
+    makeNumericLearnerParam("regression_stop", default = 1e-6, lower = -1),
     makeLogicalLearnerParam("quiet_mode", tunable = FALSE),
-    makeIntegerLearnerParam("max_confusion_matrix_size", default = 20, tunable = FALSE),
-    makeIntegerLearnerParam("max_hit_ratio_k", default = 10), # is this tunable?
+    makeIntegerLearnerParam("max_confusion_matrix_size", default = 20, tunable = FALSE, lower = 0),
+    makeIntegerLearnerParam("max_hit_ratio_k", default = 10, lower = 0), # is this tunable?
     makeLogicalLearnerParam("balance_classes", default = FALSE),
     makeNumericLearnerParam("class_sampling_factors", requires = expression(balance_classes == TRUE)),
     makeNumericLearnerParam("max_after_balance_size", default = 5),
@@ -235,7 +237,7 @@ predictLearner.classif.h2odeeplearning = function(.learner, .model, .newdata, ..
     return(p.df$predict)
   } else {
     p.df$predict = NULL
-    return(p.df)
+    return(as.matrix(p.df))
   }
 }
 
