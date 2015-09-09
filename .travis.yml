@@ -15,6 +15,7 @@ r_github_packages:
     - berndbischl/BBmisc
     - berndbischl/parallelMap
     - berndbischl/ParamHelpers
+    - jimhester/covr
 r_binary_packages:
     - ada
     - adabag
@@ -110,14 +111,12 @@ before_script:
     - Rscript /tmp/update-packages.r
     - sudo R CMD javareconf
     - java -cp /usr/local/lib/R/site-library/RWekajars/java/weka.jar weka.core.WekaPackageManager -install-package thirdparty/XMeans1.0.4.zip
+
+after_success:
+    - Rscript -e 'covr::codecov()'
 notifications:
   email:
     recipients:
-        - bernd_bischl@gmx.net
-        - michellang@gmail.com
-        - travis.mlr@jakob-r.de
-        - larsko@cs.ubc.ca
-        - schiffner@math.uni-duesseldorf.de
-        - erich.studerus@gmail.com
+        - xihuil.silence@gmail.com
     on_success: change
     on_failure: always
